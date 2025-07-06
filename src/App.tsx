@@ -7,6 +7,7 @@ import AnalysisResults from './components/AnalysisResults'
 import LoadingSpinner from './components/LoadingSpinner'
 import FeaturesPage from './components/FeaturesPage'
 import HowItWorksPage from './components/HowItWorksPage'
+import UserInfoForm from './components/UserInfoForm'
 import { AnalysisResult } from './types'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
   const [resumeFile, setResumeFile] = useState<File | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null)
+  const [showUserForm, setShowUserForm] = useState(false)
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page)
@@ -25,48 +27,12 @@ function App() {
       return
     }
 
-    setIsAnalyzing(true)
-    
-    try {
-      const formData = new FormData()
-      formData.append('job_description', jobDescription)
-      formData.append('resume_file', resumeFile)
+    // Show user info form instead of directly analyzing
+    setShowUserForm(true)
+  }
 
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) {
-        throw new Error('Analysis failed')
-      }
-
-      const result = await response.json()
-      setAnalysisResult(result)
-    } catch (error) {
-      console.error('Analysis error:', error)
-      // For demo purposes, show mock results
-      setTimeout(() => {
-        setAnalysisResult({
-          ats_score: 78,
-          keyword_matches: 12,
-          total_keywords: 18,
-          missing_keywords: ['Python', 'Machine Learning', 'AWS', 'Docker', 'Kubernetes', 'CI/CD'],
-          suggestions: [
-            'Add more technical keywords related to the job requirements',
-            'Include specific achievements with quantifiable results',
-            'Optimize the skills section with relevant technologies',
-            'Improve the summary section to better match job description'
-          ],
-          tailored_resume_url: '/api/download/tailored-resume.pdf',
-          original_filename: resumeFile.name
-        })
-        setIsAnalyzing(false)
-      }, 3000)
-      return
-    }
-
-    setIsAnalyzing(false)
+  const handleBackToUpload = () => {
+    setShowUserForm(false)
   }
 
   const canAnalyze = jobDescription.trim() && resumeFile && !isAnalyzing
@@ -86,6 +52,20 @@ function App() {
       <div className="min-h-screen">
         <Header onNavigate={handleNavigate} />
         <HowItWorksPage onNavigate={handleNavigate} />
+      </div>
+    )
+  }
+
+  // Show user info form
+  if (showUserForm) {
+    return (
+      <div className="min-h-screen">
+        <Header onNavigate={handleNavigate} />
+        <UserInfoForm 
+          onBack={handleBackToUpload}
+          jobDescription={jobDescription}
+          resumeFile={resumeFile}
+        />
       </div>
     )
   }
@@ -120,6 +100,7 @@ function App() {
               setAnalysisResult(null)
               setJobDescription('')
               setResumeFile(null)
+              setShowUserForm(false)
             }}
           />
         ) : (
@@ -148,7 +129,7 @@ function App() {
           </div>
         )}
 
-        {!isAnalyzing && !analysisResult && (
+        {!isAnalyzing && !analysisResult && !showUserForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
