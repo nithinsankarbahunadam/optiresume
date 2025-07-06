@@ -33,6 +33,53 @@
   .glass-effect {
     @apply bg-white/80 backdrop-blur-sm border border-white/20;
   }
+
+  /* Custom styles for ReactQuill read-only mode */
+  .read-only-quill .ql-toolbar {
+    display: none;
+  }
+  
+  .read-only-quill .ql-container {
+    border-top: 1px solid #ccc;
+  }
+
+  /* ReactQuill custom styling */
+  .ql-editor {
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 400px;
+  }
+
+  .ql-editor h1, .ql-editor h2, .ql-editor h3 {
+    color: #2563eb;
+    font-weight: bold;
+    margin: 1em 0 0.5em 0;
+  }
+
+  .ql-editor h1 {
+    font-size: 1.8em;
+  }
+
+  .ql-editor h2 {
+    font-size: 1.5em;
+  }
+
+  .ql-editor h3 {
+    font-size: 1.3em;
+  }
+
+  .ql-editor p {
+    margin: 0.5em 0;
+  }
+
+  .ql-editor ul, .ql-editor ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+
+  .ql-editor strong {
+    font-weight: 600;
+  }
 }
 
 .animate-gradient {
